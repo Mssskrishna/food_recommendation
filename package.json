@@ -1,0 +1,12 @@
+{
+  "name": "order_recommendation",
+  "version": "1.0.0",
+  "description": "frontend -> backend -> database (mongo db atlas)                 |                    embedding server(local setup for faster embeddings)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
