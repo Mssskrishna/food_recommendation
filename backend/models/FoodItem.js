@@ -42,37 +42,29 @@ const FoodItemSchema = new mongoose.Schema(
         "Curry",
         "Wrap",
         "Breakfast",
-      ], // Example categories
+      ], // Example categories (!create category model)
       required: true,
     },
 
-    // Metadata for search/ranking
     tags: [
       {
         type: String,
       },
     ],
-
-    // Optional: Embedding for the item's name/description (for item-to-item recommendation)
-    // foodEmbedding: {
-    //     type: [Number], // Array of 768 floating point numbers
-    //     required: false // Only required if item-based recs are done instantly
-    // }
     itemEmbedding: {
-      type: [Number], // Stored as an array of floating-point numbers
+      type: [Number], 
       validate: {
         validator: function (v) {
-          // Validator ensures the array is not null/empty and has the correct dimension
           return v && v.length === 768;
         },
         message:
           "Embedding must be an array of exactly 768 dimensions for HNSW.",
       },
-      required: false, // Set to true if every item must have an embedding
+      required: false, 
     },
   },
   {
-    timestamps: true, // Adds createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 
