@@ -3,13 +3,11 @@ const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema(
   {
-    // Link to the user who placed the order (if authentication is implemented)
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: false,
     },
 
-    // Items included in the order
     items: [
       {
         itemId: {

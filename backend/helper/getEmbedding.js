@@ -5,10 +5,10 @@ async function getEmbeddingFromPython(textArray) {
   try {
     console.log(textArray)
     const response = await axios.post(PYTHON_EMBEDDING_SERVER, {
-      texts: [textArray],
+      texts: textArray,
     });
 
-    return response.data.embeddings[0];
+    return response.data.embeddings;
   } catch (error) {
     console.error(
       "Error fetching embedding from Python server:",
@@ -17,4 +17,5 @@ async function getEmbeddingFromPython(textArray) {
     throw new Error("Embedding service failed.");
   }
 }
+
 module.exports = getEmbeddingFromPython;

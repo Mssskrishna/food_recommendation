@@ -19,13 +19,11 @@ const OrderEmbeddingSchema = new mongoose.Schema({
         required: true
     },
 
-    // A textual summary of the order used to generate the embedding (optional, for debugging)
     embeddingText: {
         type: String,
         required: true
     },
     
-    // Optional: userId for user-specific recommendations
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: false 

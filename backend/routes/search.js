@@ -1,29 +1,11 @@
-const axios = require("axios");
-
 const FoodItemModel = require("../models/FoodItem.js");
 
-const PYTHON_EMBEDDING_SERVER = "http://127.0.0.1:8000/encode";
-const MAX_RECOMMENDATIONS = 5;
+const MAX_RECOMMENDATIONS = 10;
 const VECTOR_INDEX_NAME = "item_index";
+const getEmbeddingFromPython = require("../helper/getEmbedding.js");
 const express = require("express");
 const app = express.Router();
 
-async function getEmbeddingFromPython(textArray) {
-  try {
-    console.log(textArray)
-    const response = await axios.post(PYTHON_EMBEDDING_SERVER, {
-      texts: [textArray],
-    });
-
-    return response.data.embeddings[0];
-  } catch (error) {
-    console.error(
-      "Error fetching embedding from Python server:",
-      error.message
-    );
-    throw new Error("Embedding service failed.");
-  }
-}
 app.post("/recommend", async (req, res) => {
   const { userQuery } = req.body;
 
@@ -34,7 +16,7 @@ app.post("/recommend", async (req, res) => {
   }
 
   try {
-    const queryVector = await getEmbeddingFromPython(userQuery);
+    const queryVector = await getEmbeddingFromPython([userQuery]);
     const recommendations = await FoodItemModel.aggregate([
       {
         $vectorSearch: {

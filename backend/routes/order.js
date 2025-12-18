@@ -5,23 +5,24 @@ const PYTHON_EMBEDDING_SERVER = "http://127.0.0.1:8000/encode";
 
 const OrderModel = require("../models/Order");
 const OrderEmbeddingModel = require("../models/OrderEmbedding");
+const getEmbeddingFromPython = require("../helper/getEmbedding");
 
-async function getEmbeddingFromPython(textArray) {
-  try {
-    console.log(textArray)
-    const response = await axios.post(PYTHON_EMBEDDING_SERVER, {
-      texts: textArray,
-    });
+// async function getEmbeddingFromPython(textArray) {
+//   try {
+//     console.log(textArray)
+//     const response = await axios.post(PYTHON_EMBEDDING_SERVER, {
+//       texts: textArray,
+//     });
 
-    return response.data.embeddings;
-  } catch (error) {
-    console.error(
-      "Error fetching embedding from Python server:",
-      error.message
-    );
-    throw new Error("Embedding service failed.");
-  }
-}
+//     return response.data.embeddings;
+//   } catch (error) {
+//     console.error(
+//       "Error fetching embedding from Python server:",
+//       error.message
+//     );
+//     throw new Error("Embedding service failed.");
+//   }
+// }
 
 function calculateMeanVector(vectors) {
   if (vectors.length === 0) return new Array(768).fill(0);
@@ -48,7 +49,6 @@ async function createOrderMeanEmbedding(orderDoc) {
     return;
   }
 
-  // A. Extract Textual Descriptions from Order Items
   const itemDescriptions = orderDoc.items.map((item) => item.description); 
 
   const itemEmbeddings = await getEmbeddingFromPython(itemDescriptions);
@@ -64,7 +64,7 @@ async function createOrderMeanEmbedding(orderDoc) {
 
   await OrderEmbeddingModel.create(newOrderEmbedding);
   console.log(
-    `✅ Mean Embedding saved for Order ${orderDoc._id}. System trained.`
+    `Mean Embedding saved for Order ${orderDoc._id}. System trained.`
   );
 }
 app.post("/place", async (req, res) => {
@@ -74,28 +74,23 @@ app.post("/place", async (req, res) => {
     const orderData = { userId, items, totalAmount, deliveryAddress,description };
     const newOrder = await OrderModel.create(orderData);
 
-    console.log(`✅ Order ${newOrder._id} saved successfully.`);
+    console.log(` Order ${newOrder._id} saved successfully.`);
 
-    // 2. --- Asynchronous Vector Training Trigger ---
-    // Run the training process in the background. It should not block the user response.
-    // We use an immediately invoked async function (IIAF) for background processing.
     (async () => {
       await createOrderMeanEmbedding(newOrder);
     })().catch((err) => {
       console.error(
-        `❌ Background vector training failed for Order ${newOrder._id}:`,
+        ` Background vector training failed for Order ${newOrder._id}:`,
         err
       );
-      // NOTE: The main user request succeeded, but we log the failure.
     });
 
-    // Send successful response immediately to the user
     return res.status(201).json({
       message: "Order placed and training initiated.",
       orderId: newOrder._id,
     });
   } catch (error) {
-    console.error("❌ Order placement failed:", error);
+    console.error(" Order placement failed:", error);
     return res.status(500).json({ message: "Failed to place order." });
   }
 });

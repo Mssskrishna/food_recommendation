@@ -5,7 +5,6 @@ const app = express.Router();
 // --- Configuration ---
 const PYTHON_EMBEDDING_SERVER = "http://127.0.0.1:8000/encode"; // Your Python server endpoint
 
-// Sample descriptions ready to be encoded
 const descriptionsToSend = [
   "Hearty beef chili topped with shredded cheddar cheese, sour cream, and fresh green onions.",
   "Flaky, buttered croissant filled with sliced ham and Swiss cheese, served warm.",
@@ -25,7 +24,7 @@ async function getTenEmbeddings() {
   );
   try {
     const response = await axios.post(PYTHON_EMBEDDING_SERVER, {
-      texts: descriptionsToSend, // The Python server expects this array structure
+      texts: descriptionsToSend, 
     });
 
     const embeddings = response.data.embeddings;
@@ -38,24 +37,21 @@ async function getTenEmbeddings() {
       );
     }
 
-    console.log(`✅ Successfully received ${embeddings.length} vectors.`);
+    console.log(`Successfully received ${embeddings.length} vectors.`);
     console.log(`Vector dimension check: ${embeddings[0].length} floats.`);
 
     return embeddings;
   } catch (error) {
     console.error(
-      "❌ FATAL ERROR: Could not fetch embeddings from Python server."
+      "FATAL ERROR: Could not fetch embeddings from Python server."
     );
     console.error(
       `Check if embedding_server.py is running at ${PYTHON_EMBEDDING_SERVER}`
     );
 
-    // Throw an error to stop the process if the core component is down
     throw new Error(`Embedding Service Failed: ${error.message}`);
   }
 }
-// Example usage:
-// This function would be part of your data seeding logic.
 
 async function seedFoodItems() {
   try {
@@ -70,7 +66,7 @@ async function seedFoodItems() {
         price: 13.0,
         category: "Soup",
         tags: ["spicy", "comfort", "beef", "cheddar"],
-        itemEmbedding: newEmbeddings[0], // Vector for Item 21
+        itemEmbedding: newEmbeddings[0],
       },
       {
         itemId: "BRK-022",
@@ -80,7 +76,7 @@ async function seedFoodItems() {
         price: 7.5,
         category: "Breakfast",
         tags: ["breakfast", "savory", "ham", "pastry"],
-        itemEmbedding: newEmbeddings[1], // Vector for Item 22
+        itemEmbedding: newEmbeddings[1],
       },
       {
         itemId: "DST-023",
@@ -90,7 +86,7 @@ async function seedFoodItems() {
         price: 8.99,
         category: "Dessert",
         tags: ["sweet", "spicy", "Thai", "mango", "coconut"],
-        itemEmbedding: newEmbeddings[2], // Vector for Item 23
+        itemEmbedding: newEmbeddings[2], 
       },
       {
         itemId: "SOU-024",
@@ -100,7 +96,7 @@ async function seedFoodItems() {
         price: 9.5,
         category: "Soup",
         tags: ["French", "soup", "cheese", "savory"],
-        itemEmbedding: newEmbeddings[3], // Vector for Item 24
+        itemEmbedding: newEmbeddings[3], 
       },
       {
         itemId: "SEA-025",
@@ -110,7 +106,7 @@ async function seedFoodItems() {
         price: 22.0,
         category: "Seafood",
         tags: ["healthy", "fish", "asparagus", "gourmet"],
-        itemEmbedding: newEmbeddings[4], // Vector for Item 25
+        itemEmbedding: newEmbeddings[4], 
       },
       {
         itemId: "SLD-026",
@@ -120,7 +116,7 @@ async function seedFoodItems() {
         price: 11.0,
         category: "Wrap",
         tags: ["chicken option", "classic", "lettuce", "parmesan"],
-        itemEmbedding: newEmbeddings[5], // Vector for Item 26
+        itemEmbedding: newEmbeddings[5], 
       },
       {
         itemId: "APP-027",
@@ -130,7 +126,7 @@ async function seedFoodItems() {
         price: 14.0,
         category: "Appetizer",
         tags: ["spicy", "chicken", "appetizer", "fried option"],
-        itemEmbedding: newEmbeddings[6], // Vector for Item 27
+        itemEmbedding: newEmbeddings[6],
       },
       {
         itemId: "SOU-028",
@@ -140,7 +136,7 @@ async function seedFoodItems() {
         price: 8.0,
         category: "Soup",
         tags: ["cold", "vegan", "Spanish", "tomato"],
-        itemEmbedding: newEmbeddings[7], // Vector for Item 28
+        itemEmbedding: newEmbeddings[7],
       },
       {
         itemId: "DST-029",
@@ -150,7 +146,7 @@ async function seedFoodItems() {
         price: 5.5,
         category: "Dessert",
         tags: ["sweet", "cake", "cream cheese", "classic"],
-        itemEmbedding: newEmbeddings[8], // Vector for Item 29
+        itemEmbedding: newEmbeddings[8], 
       },
       {
         itemId: "CUR-030",
@@ -160,18 +156,16 @@ async function seedFoodItems() {
         price: 16.5,
         category: "Curry",
         tags: ["vegetarian", "spicy option", "coconut", "Indian"],
-        itemEmbedding: newEmbeddings[9], // Vector for Item 30
+        itemEmbedding: newEmbeddings[9],
       },
     ];
-    // 3. Insert the fully structured documents into MongoDB Atlas
     await FoodItemModel.insertMany(itemsToInsert);
-    console.log("✅ All 10 Food Items seeded successfully with embeddings.");
+    console.log(" All 10 Food Items seeded successfully with embeddings.");
   } catch (error) {
     console.error("Seeding failed:", error.message);
   }
 }
 
-// Call seedFoodItems() when your server starts up, after the Mongoose connection is established.
 app.post("/", async (req, res) => {
   seedFoodItems();
 });

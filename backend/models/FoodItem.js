@@ -39,7 +39,9 @@ const FoodItemSchema = new mongoose.Schema(
         "Sandwich",
         "Appetizer",
         "Soup",
-        "Curry","Wrap","Breakfast"
+        "Curry",
+        "Wrap",
+        "Breakfast",
       ], // Example categories
       required: true,
     },
